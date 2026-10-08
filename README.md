@@ -6,8 +6,8 @@
 
 Landing page gastronômica de alta conversão — suítes aconchegantes, frutos do mar frescos, coquetéis autorais e pôr do sol inesquecível.
 
-[![Live Demo](https://img.shields.io/badge/🌊_Ver_o_site_ao_vivo-0E2E4E?style=for-the-badge)](https://ricklima991.github.io/pousada-do-adao/)
-[![GitHub Pages](https://img.shields.io/badge/deploy-GitHub_Pages-C2A059?style=flat-square&logo=github)](https://github.com/Ricklima991/pousada-do-adao)
+[![Live Demo](https://img.shields.io/badge/🌊_Ver_o_site_ao_vivo-0E2E4E?style=for-the-badge)](https://rickdigitalestudio.github.io/pousada-do-adao/)
+[![GitHub Pages](https://img.shields.io/badge/deploy-GitHub_Pages-C2A059?style=flat-square&logo=github)](https://github.com/Rickdigitalestudio/pousada-do-adao)
 ![HTML5](https://img.shields.io/badge/HTML5-single_file-E34F26?style=flat-square&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-design_system-1572B6?style=flat-square&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JS-vanilla-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
