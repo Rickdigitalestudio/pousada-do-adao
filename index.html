@@ -21,6 +21,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Great+Vibes&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js"}}
+</script>
 <style>
 :root{
   --cream:#FAF6EE; --cream-2:#F2EAD9; --card:#FFFDF8;
@@ -63,7 +66,10 @@ header{position:fixed;inset:0 0 auto 0;z-index:50;transition:.35s;background:rgb
 /* HERO */
 .hero{position:relative;min-height:100svh;display:flex;align-items:center;padding:130px 0 70px;isolation:isolate}
 .hero-bg{position:absolute;inset:0;z-index:-2}
-.hero-bg img{width:100%;height:100%;object-fit:cover}
+.hero-bg img{width:100%;height:100%;object-fit:cover;transition:opacity 1s}
+#hero3d{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:-3;opacity:0;transition:opacity 1.4s}
+.hero-bg.webgl #hero3d{opacity:1}
+.hero-bg.webgl img{opacity:0}
 .hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(250,246,238,.97) 0%,rgba(250,246,238,.88) 38%,rgba(250,246,238,.25) 65%,rgba(250,246,238,.05) 100%)}
 .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;width:100%}
 .hero h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(42px,5.2vw,68px);line-height:1.02;letter-spacing:.04em;color:var(--navy)}
@@ -118,7 +124,7 @@ section{padding:84px 0}
 .cock h4{font-family:'Cormorant Garamond',serif;font-size:14px;letter-spacing:.06em;color:var(--navy);margin-top:10px}
 .cock span{font-size:11px;color:var(--muted);font-style:italic}
 .sunset{position:relative;min-height:480px;display:flex;align-items:flex-end;color:#fff}
-.sunset img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.sunset img,.sunset video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .sunset::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(10,33,56,.88),rgba(10,33,56,.15) 60%)}
 .sunset-inner{position:relative;padding:40px;z-index:1}
 .sunset-inner h3{font-family:'Cormorant Garamond',serif;font-size:32px;line-height:1.15;letter-spacing:.04em}
@@ -164,7 +170,7 @@ footer{background:var(--navy);color:#CBD7E6;padding:56px 0 26px}
 .lightbox.open{display:grid}
 .lightbox img{max-width:min(920px,94vw);max-height:84vh;border-radius:12px;border:6px solid #fff}
 .lightbox button{position:absolute;top:18px;right:22px;background:var(--gold);border:0;color:#fff;font-size:20px;width:44px;height:44px;border-radius:50%;cursor:pointer}
-.reveal{opacity:0;transform:translateY(26px);transition:.7s}
+.reveal{opacity:0;transform:translateY(30px) rotateX(9deg);transform-origin:top center;transition:.85s cubic-bezier(.2,.7,.2,1)}
 .reveal.vis{opacity:1;transform:none}
 /* back to top */
 .totop{position:fixed;left:20px;bottom:20px;z-index:60;width:48px;height:48px;border-radius:50%;border:1px solid var(--gold);background:rgba(14,46,78,.92);color:var(--gold-soft);font-size:20px;cursor:pointer;opacity:0;pointer-events:none;transition:.3s}
@@ -208,12 +214,44 @@ footer{background:var(--navy);color:#CBD7E6;padding:56px 0 26px}
   .foot-grid{grid-template-columns:1fr}
   .hero{padding-top:110px}
 }
+/* ============ CAMADA 3D / INTERATIVA ============ */
+/* loader */
+.loader{position:fixed;inset:0;background:var(--cream);display:grid;place-items:center;z-index:200;transition:opacity .8s,visibility .8s}
+.loader.hide{opacity:0;visibility:hidden}
+.loader-in{text-align:center}
+.loader-in .logo-mark{width:70px;height:70px;margin:0 auto 16px;font-size:34px;animation:loadPulse 1.5s ease-in-out infinite}
+.loader-in p{font-size:11px;letter-spacing:.5em;text-transform:uppercase;color:var(--gold-2);font-weight:600}
+@keyframes loadPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(194,160,89,.35)}50%{transform:scale(1.06);box-shadow:0 0 0 16px rgba(194,160,89,0)}}
+/* scroll progress */
+.prog{position:fixed;top:0;left:0;height:3px;width:100%;transform:scaleX(0);transform-origin:0 50%;background:linear-gradient(90deg,var(--gold-2),var(--gold),var(--gold-soft));z-index:70;will-change:transform}
+/* custom cursor */
+.cur-dot,.cur-ring{position:fixed;top:0;left:0;pointer-events:none;z-index:300;border-radius:50%}
+.cur-dot{width:7px;height:7px;background:var(--gold);margin:-3.5px 0 0 -3.5px}
+.cur-ring{width:34px;height:34px;border:1px solid rgba(194,160,89,.55);margin:-17px 0 0 -17px;transition:width .25s,height .25s,margin .25s,background .25s,opacity .3s}
+.cur-ring.big{width:56px;height:56px;margin:-28px 0 0 -28px;background:rgba(194,160,89,.1)}
+@media(pointer:coarse),(max-width:820px){.cur-dot,.cur-ring{display:none}}
+/* 3D tilt */
+.tilt{position:relative;transform-style:preserve-3d;will-change:transform}
+.tilt .glare{position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .35s;background:radial-gradient(360px circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.38),transparent 62%);z-index:2}
+.tilt:hover .glare{opacity:1}
+.card-body,.dish h3,.dish p{transform:translateZ(24px)}
+.card-body{transform-style:preserve-3d}
+@media (prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none}
+  #hero3d{display:none}
+  .loader{display:none}
+}
 </style>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":["Restaurant","LodgingBusiness"],"name":"Pousada e Restaurante do Adão","servesCuisine":["Frutos do mar","Brasileira"],"priceRange":"$$","telephone":"+55-11-99999-9999","address":{"@type":"PostalAddress","addressLocality":"Rio Grande da Serra","addressRegion":"SP","addressCountry":"BR"},"hasMap":"https://maps.app.goo.gl/9yCmkrTV2Pdp77SQ8","aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","reviewCount":"312"},"openingHours":["Tu-Su 11:30-23:00"]}
 </script>
 </head>
 <body>
+
+<div class="loader" id="loader"><div class="loader-in"><div class="logo-mark serif">≋</div><p>DO ADÃO</p></div></div>
+<div class="prog" id="prog" aria-hidden="true"></div>
+<div class="cur-dot" id="curDot" aria-hidden="true"></div>
+<div class="cur-ring" id="curRing" aria-hidden="true"></div>
 
 <header>
   <nav class="nav">
@@ -242,7 +280,7 @@ footer{background:var(--navy);color:#CBD7E6;padding:56px 0 26px}
 
 <!-- HERO -->
 <section class="hero" id="inicio" style="padding-bottom:40px">
-  <div class="hero-bg"><img src="https://images.unsplash.com/photo-1540541338287-41700207dee6?q=80&w=1920&auto=format&fit=crop" alt="Terraço com vista para o mar ao pôr do sol"></div>
+  <div class="hero-bg" id="heroBg"><canvas id="hero3d" aria-hidden="true"></canvas><img src="https://images.unsplash.com/photo-1540541338287-41700207dee6?q=80&w=1920&auto=format&fit=crop" alt="Terraço com vista para o mar ao pôr do sol"></div>
   <div class="wrap hero-grid">
     <div class="reveal vis">
       <div class="eyebrow" style="justify-content:flex-start">Pousada • Restaurante • Mirante</div>
@@ -254,8 +292,8 @@ footer{background:var(--navy);color:#CBD7E6;padding:56px 0 26px}
         <a href="#cardapio" class="btn btn-outline">Ver cardápio</a>
       </div>
       <div class="hero-proof">
-        <div><strong>4.9 ★</strong><br><span> Avaliação dos hóspedes</span></div>
-        <div><strong>+12 mil</strong><br><span> Pratos servidos / ano</span></div>
+        <div><strong data-count="4.9" data-decimals="1" data-suffix=" ★">4.9 ★</strong><br><span> Avaliação dos hóspedes</span></div>
+        <div><strong data-count="12" data-prefix="+" data-suffix=" mil">+12 mil</strong><br><span> Pratos servidos / ano</span></div>
         <div><strong>Pôr do sol</strong><br><span> Vista panorâmica</span></div>
       </div>
     </div>
@@ -334,7 +372,11 @@ footer{background:var(--navy);color:#CBD7E6;padding:56px 0 26px}
         </div>
       </div>
       <div class="sunset">
-        <img loading="lazy" src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop" alt="Pôr do sol visto do terraço">
+        <video class="sunset-vid" muted loop playsinline preload="none"
+          poster="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop"
+          aria-label="Ondas do mar batendo na areia ao pôr do sol">
+          <source data-src="https://videos.pexels.com/video-files/15756097/15756097-hd_1920_1080_30fps.mp4" type="video/mp4">
+        </video>
         <div class="sunset-inner">
           <h3>O PÔR DO SOL TEM GOSTO MELHOR AQUI</h3>
           <p>Quando o sol toca o horizonte, o terraço vira palco: taças ao alto, brisa do mar e sabores que ficam na memória.</p>
@@ -371,7 +413,7 @@ footer{background:var(--navy);color:#CBD7E6;padding:56px 0 26px}
       <button><img loading="lazy" src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=900&auto=format&fit=crop" alt="Mesa ao pôr do sol"></button>
       <button><img loading="lazy" src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=900&auto=format&fit=crop" alt="Piscina e mar"></button>
       <button><img loading="lazy" src="https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?q=80&w=900&auto=format&fit=crop" alt="Jantar em família"></button>
-      <button><img loading="lazy" src="https://images.unsplash.com/photo-1533777857889-4b7bd5dfa4d3?q=80&w=900&auto=format&fit=crop" alt="Coquetel autoral"></button>
+      <button><img loading="lazy" src="https://images.unsplash.com/photo-1470337458703-46ad1756a187?q=80&w=900&auto=format&fit=crop" alt="Coquetel autoral"></button>
       <button><img loading="lazy" src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=900&auto=format&fit=crop" alt="Pousada ao entardecer"></button>
     </div>
   </div>
@@ -459,6 +501,11 @@ footer{background:var(--navy);color:#CBD7E6;padding:56px 0 26px}
 
 <script>
 const $=s=>document.querySelector(s);
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+// loader
+const loader=$('#loader');
+addEventListener('load',()=>setTimeout(()=>loader.classList.add('hide'),350));
+setTimeout(()=>loader.classList.add('hide'),2600);
 // menu mobile
 const burger=$('#burger'),mmenu=$('#mmenu');
 burger.addEventListener('click',()=>{
@@ -471,14 +518,19 @@ mmenu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>mmenu.clas
 // reveal
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');io.unobserve(e.target)}}),{threshold:.12});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-// nav ativa
+// nav ativa + barra de progresso
 const secs=['inicio','cardapio','suites','experiencia','galeria','contato'];
 const navA=[...document.querySelectorAll('.links a')];
-addEventListener('scroll',()=>{
+const prog=$('#prog');
+function onScroll(){
+  const max=document.documentElement.scrollHeight-innerHeight;
+  prog.style.transform='scaleX('+(max>0?scrollY/max:0)+')';
   let cur='inicio';
   secs.forEach(id=>{const el=document.getElementById(id);if(el&&scrollY>=el.offsetTop-140)cur=id});
   navA.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+cur));
-},{passive:true});
+  $('#totop').classList.toggle('show',scrollY>700);
+}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
 // pré-seleciona tipo vindo das suítes
 document.querySelectorAll('[data-tipo]').forEach(a=>a.addEventListener('click',()=>{
   const t=a.dataset.tipo;const sel=$('#fType');
@@ -524,10 +576,309 @@ addEventListener('keydown',e=>{
   if(e.key==='ArrowRight')showLb(lbIdx+1);
 });
 // voltar ao topo
-const totop=$('#totop');
-addEventListener('scroll',()=>totop.classList.toggle('show',scrollY>700),{passive:true});
-totop.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
+$('#totop').addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
 $('#year').textContent=new Date().getFullYear();
+
+// vídeo do pôr do sol: carrega sob demanda, pausa fora de vista, respeita reduced-motion
+(function(){
+  const vid=document.querySelector('.sunset-vid');
+  if(!vid)return;
+  const src=vid.querySelector('source[data-src]');
+  const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let loaded=false;
+  function load(){
+    if(loaded||!src)return;
+    loaded=true;
+    vid.src=src.dataset.src;
+    vid.load();
+    // se o vídeo falhar, o poster continua na tela como fallback
+    vid.addEventListener('error',()=>{vid.removeAttribute('src')},{once:true});
+  }
+  if(reducedMotion){load();return;} // não autoplay: só mostra o poster estático
+  new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){
+      load();
+      const p=vid.play();
+      if(p&&p.catch)p.catch(()=>{});
+    }else if(!vid.paused){
+      vid.pause();
+    }
+  }),{threshold:.25}).observe(vid.closest('.sunset'));
+})();
+
+/* ===== INTERATIVIDADE AVANÇADA (3Dtilt, cursor, contadores, magnético) ===== */
+const fine=matchMedia('(pointer:fine)').matches;
+if(!reduced&&fine){
+  // tilt 3D nos cards / pratos / coquetéis + brilho que segue o mouse
+  document.querySelectorAll('.card,.plate,.cock .ph,.hero-card,.review').forEach(el=>{
+    el.classList.add('tilt');
+    const glare=document.createElement('span');glare.className='glare';el.appendChild(glare);
+    el.addEventListener('mousemove',ev=>{
+      const r=el.getBoundingClientRect();
+      const px=(ev.clientX-r.left)/r.width,py=(ev.clientY-r.top)/r.height;
+      const rx=(0.5-py)*10,ry=(px-0.5)*12;
+      el.style.transition='transform .12s ease-out';
+      el.style.transform=`perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-5px)`;
+      glare.style.setProperty('--gx',(px*100)+'%');
+      glare.style.setProperty('--gy',(py*100)+'%');
+    });
+    el.addEventListener('mouseleave',()=>{
+      el.style.transition='transform .5s ease';
+      el.style.transform='';
+    });
+  });
+  // botões magnéticos
+  document.querySelectorAll('.btn').forEach(b=>{
+    b.addEventListener('mousemove',ev=>{
+      const r=b.getBoundingClientRect();
+      const mx=ev.clientX-r.left-r.width/2,my=ev.clientY-r.top-r.height/2;
+      b.style.transform=`translate(${mx*.16}px,${my*.22-2}px)`;
+    });
+    b.addEventListener('mouseleave',()=>{b.style.transform=''});
+  });
+  // cursor personalizado
+  const dot=$('#curDot'),ring=$('#curRing');
+  let mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+  addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.transform=`translate(${mx}px,${my}px)`});
+  (function loop(){rx+=(mx-rx)*.16;ry+=(my-ry)*.16;ring.style.transform=`translate(${rx}px,${ry}px)`;requestAnimationFrame(loop)})();
+  document.querySelectorAll('a,button,input,select,textarea').forEach(el=>{
+    el.addEventListener('mouseenter',()=>ring.classList.add('big'));
+    el.addEventListener('mouseleave',()=>ring.classList.remove('big'));
+  });
+  // parallax do cartão do hero com o mouse
+  const heroCard=document.querySelector('.hero-card');
+  addEventListener('mousemove',e=>{
+    const px=e.clientX/innerWidth-.5,py=e.clientY/innerHeight-.5;
+    heroCard.style.boxShadow=`${-px*26}px ${20-py*14}px 60px rgba(14,46,78,.16)`;
+  },{passive:true});
+}
+// contadores animados do hero
+if(!reduced){
+  const cio=new IntersectionObserver(es=>es.forEach(e=>{
+    if(!e.isIntersecting)return;cio.unobserve(e.target);
+    const el=e.target,end=parseFloat(el.dataset.count),dec=+(el.dataset.decimals||0);
+    const pre=el.dataset.prefix||'',suf=el.dataset.suffix||'',t0=performance.now();
+    (function tick(t){
+      const p=Math.min((t-t0)/1300,1),ease=1-Math.pow(1-p,3);
+      el.textContent=pre+(end*ease).toFixed(dec)+suf;
+      if(p<1)requestAnimationFrame(tick);
+    })(t0);
+  }),{threshold:.6});
+  document.querySelectorAll('[data-count]').forEach(el=>cio.observe(el));
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+
+/* Cena 3D do pôr do sol no hero (Three.js) */
+const canvas=document.getElementById('hero3d');
+const heroBg=document.getElementById('heroBg');
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+if(canvas&&!reduced){
+try{
+  const isMobile=innerWidth<820;
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:!isMobile,powerPreference:'high-performance'});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,isMobile?1.5:2));
+
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,3200);
+  camera.position.set(0,13,70);
+
+  const COL={
+    deep:new THREE.Color(0x0A2138),
+    shallow:new THREE.Color(0x14395E),
+    gold:new THREE.Color(0xC2A059),
+    goldSoft:new THREE.Color(0xE9D9B8),
+    top:new THREE.Color(0x14395E)
+  };
+
+  /* --- céu com gradiente + brilho do sol --- */
+  const skyMat=new THREE.ShaderMaterial({
+    side:THREE.BackSide,depthWrite:false,
+    uniforms:{uTop:{value:COL.top},uMid:{value:COL.gold},uHorizon:{value:COL.goldSoft},uSun:{value:new THREE.Vector3(0,.03,-1).normalize()}},
+    vertexShader:`varying vec3 vP;void main(){vP=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+    fragmentShader:`
+      uniform vec3 uTop,uMid,uHorizon;uniform vec3 uSun;varying vec3 vP;
+      void main(){
+        vec3 d=normalize(vP);
+        vec3 col=mix(uHorizon,uMid,smoothstep(0.,.22,d.y));
+        col=mix(col,uTop,smoothstep(.18,.62,d.y));
+        float g=pow(max(dot(d,uSun),0.),60.);
+        float halo=pow(max(dot(d,uSun),0.),8.);
+        col+=vec3(1.,.86,.6)*g*1.1+uMid*halo*.35;
+        gl_FragColor=vec4(col,1.);
+      }`
+  });
+  const sky=new THREE.Mesh(new THREE.SphereGeometry(1700,32,24),skyMat);
+  scene.add(sky);
+
+  /* --- mar animado (shader de ondas) --- */
+  const seg=isMobile?90:150;
+  const oceanGeo=new THREE.PlaneGeometry(3200,3200,seg,seg);
+  oceanGeo.rotateX(-Math.PI/2);
+  const oceanMat=new THREE.ShaderMaterial({
+    uniforms:{
+      uTime:{value:0},uDeep:{value:COL.deep},uShallow:{value:COL.shallow},
+      uGold:{value:COL.gold},uSky:{value:COL.goldSoft},uSunPos:{value:new THREE.Vector3(0,14,-900)}
+    },
+    vertexShader:`
+      uniform float uTime;varying vec3 vW;varying float vH;varying vec3 vN;
+      float H(vec2 p){
+        float h=0.;
+        h+=sin(p.x*.020+uTime*1.05)*1.7;
+        h+=sin(p.y*.031+uTime*.85)*1.25;
+        h+=sin((p.x*.5+p.y*.5)*.05+uTime*1.7)*.7;
+        h+=sin((p.x*.5-p.y*.5)*.072-uTime*2.1)*.45;
+        return h;
+      }
+      void main(){
+        vec3 pos=position;
+        float h=H(pos.xz);
+        pos.y+=h;vH=h;
+        float e=2.5;
+        float hx=H(pos.xz+vec2(e,0.)),hz=H(pos.xz+vec2(0.,e));
+        vN=normalize(vec3(h-hx,e,h-hz));
+        vec4 w=modelMatrix*vec4(pos,1.);
+        vW=w.xyz;
+        gl_Position=projectionMatrix*viewMatrix*w;
+      }`,
+    fragmentShader:`
+      uniform float uTime;uniform vec3 uDeep,uShallow,uGold,uSky,uSunPos;
+      varying vec3 vW;varying float vH;varying vec3 vN;
+      void main(){
+        vec3 N=normalize(vN);
+        vec3 V=normalize(cameraPosition-vW);
+        float fres=pow(1.-max(dot(N,V),0.),3.);
+        vec3 base=mix(uDeep,uShallow,smoothstep(-2.2,2.6,vH));
+        vec3 L=normalize(uSunPos-vW);
+        vec3 Hh=normalize(L+V);
+        float spec=pow(max(dot(N,Hh),0.),80.);
+        float streak=smoothstep(190.,0.,abs(vW.x))*smoothstep(250.,-850.,vW.z);
+        vec3 col=base+uGold*spec*1.15;
+        col+=uGold*streak*(.20+.12*sin(vW.z*.14+uTime*2.));
+        col=mix(col,uSky,fres*.7);
+        float d=length(vW.xz-cameraPosition.xz);
+        col=mix(col,uSky,smoothstep(320.,1500.,d));
+        gl_FragColor=vec4(col,1.);
+      }`
+  });
+  const ocean=new THREE.Mesh(oceanGeo,oceanMat);
+  scene.add(ocean);
+
+  /* --- sol (sprite com gradiente radial) --- */
+  function sunTex(core){
+    const c=document.createElement('canvas');c.width=c.height=128;
+    const x=c.getContext('2d');
+    const g=x.createRadialGradient(64,64,0,64,64,64);
+    if(core){g.addColorStop(0,'rgba(255,250,235,1)');g.addColorStop(.4,'rgba(255,225,170,.95)');g.addColorStop(1,'rgba(255,210,140,0)');}
+    else{g.addColorStop(0,'rgba(255,225,170,.55)');g.addColorStop(1,'rgba(255,210,140,0)');}
+    x.fillStyle=g;x.fillRect(0,0,128,128);
+    return new THREE.CanvasTexture(c);
+  }
+  const sunGroup=new THREE.Group();
+  const sunCore=new THREE.Sprite(new THREE.SpriteMaterial({map:sunTex(true),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));
+  sunCore.scale.set(120,120,1);
+  const sunHalo=new THREE.Sprite(new THREE.SpriteMaterial({map:sunTex(false),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:.9}));
+  sunHalo.scale.set(420,420,1);
+  sunGroup.add(sunHalo,sunCore);
+  sunGroup.position.set(0,16,-900);
+  scene.add(sunGroup);
+
+  /* --- pássaros simples cruzando o céu --- */
+  function birdTex(){
+    const c=document.createElement('canvas');c.width=128;c.height=64;
+    const x=c.getContext('2d');
+    x.strokeStyle='rgba(14,46,78,.85)';x.lineWidth=6;x.lineCap='round';
+    x.beginPath();x.moveTo(14,40);x.quadraticCurveTo(40,14,64,36);x.quadraticCurveTo(88,14,114,40);x.stroke();
+    return new THREE.CanvasTexture(c);
+  }
+  const birds=[];
+  const bt=birdTex();
+  const nBirds=isMobile?4:7;
+  for(let i=0;i<nBirds;i++){
+    const s=new THREE.Sprite(new THREE.SpriteMaterial({map:bt,transparent:true,depthWrite:false,opacity:.85}));
+    const sc=10+Math.random()*14;
+    s.scale.set(sc,sc*.5,1);
+    s.position.set(-400+Math.random()*800,28+Math.random()*55,-220-Math.random()*420);
+    s.userData={sp:9+Math.random()*12,ph:Math.random()*6.28,baseY:s.position.y};
+    birds.push(s);scene.add(s);
+  }
+
+  /* --- partículas douradas (brisa) --- */
+  const nP=isMobile?110:230;
+  const pGeo=new THREE.BufferGeometry();
+  const pPos=new Float32Array(nP*3),pSpd=new Float32Array(nP);
+  for(let i=0;i<nP;i++){
+    pPos[i*3]=-230+Math.random()*460;
+    pPos[i*3+1]=Math.random()*90;
+    pPos[i*3+2]=-430+Math.random()*470;
+    pSpd[i]=1.5+Math.random()*4;
+  }
+  pGeo.setAttribute('position',new THREE.BufferAttribute(pPos,3));
+  const particles=new THREE.Points(pGeo,new THREE.PointsMaterial({
+    color:0xE9D9B8,size:1.1,transparent:true,opacity:.8,depthWrite:false,blending:THREE.AdditiveBlending
+  }));
+  scene.add(particles);
+
+  /* --- interação: parallax de mouse + scroll (sol se põe) --- */
+  let tmx=0,tmy=0,cmx=0,cmy=0;
+  addEventListener('mousemove',e=>{tmx=e.clientX/innerWidth-.5;tmy=e.clientY/innerHeight-.5},{passive:true});
+  let scrollP=0;
+  function heroH(){const h=document.querySelector('.hero');return h?h.offsetHeight:innerHeight}
+  addEventListener('scroll',()=>{scrollP=Math.min(Math.max(scrollY/heroH(),0),1)},{passive:true});
+
+  function resize(){
+    const w=innerWidth,h=heroBg.offsetHeight||innerHeight;
+    renderer.setSize(w,h,false);
+    camera.aspect=w/h;camera.updateProjectionMatrix();
+  }
+  addEventListener('resize',resize);resize();
+
+  // pausa quando o hero não está visável / aba oculta
+  let visible=true;
+  new IntersectionObserver(es=>{visible=es[0].isIntersecting},{threshold:0}).observe(document.querySelector('.hero'));
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)clock.getDelta()});
+
+  const clock=new THREE.Clock();
+  function animate(){
+    requestAnimationFrame(animate);
+    if(!visible||document.hidden)return;
+    const t=clock.getElapsedTime();
+    oceanMat.uniforms.uTime.value=t;
+    // sol se põe conforme o scroll
+    const sunY=16-scrollP*26;
+    sunGroup.position.y=sunY;
+    skyMat.uniforms.uSun.value.set(0,Math.max(sunY/900+.03,-.03),-1).normalize();
+    oceanMat.uniforms.uSunPos.value.set(0,sunY,-900);
+    // pássaros
+    birds.forEach(b=>{
+      b.position.x+=b.userData.sp*.016;
+      if(b.position.x>430)b.position.x=-430;
+      b.position.y=b.userData.baseY+Math.sin(t*1.6+b.userData.ph)*2.2;
+    });
+    // partículas sobem devagar
+    const arr=pGeo.attributes.position.array;
+    for(let i=0;i<nP;i++){
+      arr[i*3+1]+=pSpd[i]*.016;
+      arr[i*3]+=.02*Math.sin(t*.6+i);
+      if(arr[i*3+1]>95)arr[i*3+1]=0;
+    }
+    pGeo.attributes.position.needsUpdate=true;
+    // parallax suave da câmera + balanço automático
+    cmx+=(tmx-cmx)*.045;cmy+=(tmy-cmy)*.045;
+    camera.position.x=cmx*10+Math.sin(t*.25)*1.6;
+    camera.position.y=13-cmy*4+scrollP*9;
+    camera.lookAt(0,9+scrollP*4,-400);
+    renderer.render(scene,camera);
+  }
+  animate();
+  heroBg.classList.add('webgl');
+}catch(err){
+  console.warn('WebGL indisponível — usando imagem estática do hero.',err);
+}
+}
 </script>
 </body>
 </html>
