@@ -95,8 +95,12 @@ section{padding:84px 0}
 .sec-head p{color:var(--muted);font-weight:300}
 /* dishes */
 .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:26px}
-.dish{text-align:center}
-.dish .plate{border-radius:50%;overflow:hidden;aspect-ratio:1/1;border:6px solid #fff;box-shadow:var(--shadow);background:#fff}
+.dish{text-align:center;cursor:pointer}
+.dish-cta{display:inline-block;margin-top:8px;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-2);font-weight:600;opacity:0;transform:translateY(4px);transition:.3s}
+.dish:hover .dish-cta{opacity:1;transform:none}
+.dish:hover h3{color:var(--gold-2)}
+.dish .plate{border-radius:50%;overflow:hidden;aspect-ratio:1/1;border:6px solid #fff;box-shadow:var(--shadow);background:#fff;transition:.4s}
+.dish:hover .plate{box-shadow:0 26px 60px rgba(14,46,78,.22),0 0 0 3px var(--gold-soft)}
 .dish .plate img{width:100%;height:100%;object-fit:cover;transition:.6s}
 .dish:hover .plate img{transform:scale(1.07)}
 .dish h3{font-family:'Cormorant Garamond',serif;font-size:17px;letter-spacing:.08em;margin-top:16px;color:var(--navy)}
@@ -240,10 +244,73 @@ footer{background:var(--navy);color:#CBD7E6;padding:56px 0 26px}
   .reveal{opacity:1;transform:none}
   #hero3d{display:none}
   .loader{display:none}
+  .gal button img{animation:none!important}
 }
+/* ============ BOTÕES 3D ============ */
+.btn{position:relative;transform-style:preserve-3d;box-shadow:0 5px 0 var(--navy-deep),0 14px 26px rgba(14,46,78,.22);transition:transform .18s,box-shadow .18s,background .3s}
+.btn-gold{box-shadow:0 5px 0 var(--gold-2),0 14px 26px rgba(194,160,89,.3)}
+.btn-outline{box-shadow:0 5px 0 rgba(14,46,78,.28),0 12px 22px rgba(14,46,78,.12)}
+.btn:hover{transform:translateY(-3px);box-shadow:0 8px 0 var(--navy-deep),0 20px 34px rgba(14,46,78,.28)}
+.btn-gold:hover{box-shadow:0 8px 0 var(--gold-2),0 20px 34px rgba(194,160,89,.4)}
+.btn:active{transform:translateY(2px) scale(.985);box-shadow:0 2px 0 var(--navy-deep),0 6px 12px rgba(14,46,78,.2)}
+.btn-gold:active{box-shadow:0 2px 0 var(--gold-2),0 6px 12px rgba(194,160,89,.25)}
+.btn::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.45) 50%,transparent 70%);transform:translateX(-130%);pointer-events:none}
+.btn:hover::after{transform:translateX(130%);transition:transform .8s cubic-bezier(.25,.8,.3,1)}
+/* ============ MODAL PRATO INTERATIVO ============ */
+.dish-modal{position:fixed;inset:0;background:rgba(10,33,56,.94);backdrop-filter:blur(6px);display:none;place-items:center;z-index:90;padding:22px}
+.dish-modal.open{display:grid}
+.dm-card{background:var(--card);border-radius:20px;overflow:hidden;max-width:880px;width:100%;max-height:90vh;overflow-y:auto;display:grid;grid-template-columns:.95fr 1.05fr;box-shadow:0 40px 100px rgba(0,0,0,.5);animation:dmIn .5s cubic-bezier(.2,.8,.25,1)}
+@keyframes dmIn{from{opacity:0;transform:translateY(26px) scale(.96)}to{opacity:1;transform:none}}
+.dm-im{position:relative;min-height:260px;background:#0A2138}
+.dm-im img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.dm-im::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(10,33,56,.35),transparent 55%)}
+.dm-body{padding:36px 34px}
+.dm-eyebrow{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold-2);font-weight:600}
+.dm-body h3{font-family:'Cormorant Garamond',serif;font-size:34px;line-height:1.05;color:var(--navy);letter-spacing:.03em;margin:8px 0 4px}
+.dm-sub{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--muted);font-size:17px;margin-bottom:14px}
+.dm-price{display:inline-flex;align-items:baseline;gap:8px;font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--gold-2);margin-bottom:16px}
+.dm-price small{font-family:'Jost';font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.dm-desc{color:#415873;font-weight:300;font-size:15px;line-height:1.65;margin-bottom:20px}
+.dm-block{margin-bottom:18px}
+.dm-block h4{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--navy);font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.dm-block h4::before{content:"";width:16px;height:1px;background:var(--gold)}
+.dm-ing{display:flex;flex-wrap:wrap;gap:8px}
+.dm-ing span{font-size:12.5px;color:#415873;background:var(--cream-2);border:1px solid var(--line);padding:6px 12px;border-radius:20px}
+.dm-facts{list-style:none;display:grid;gap:9px}
+.dm-facts li{display:flex;gap:10px;font-size:14px;color:#415873;font-weight:300}
+.dm-facts li b{color:var(--navy);font-weight:500;min-width:74px}
+.dm-allerg{font-size:12.5px;color:#7A5A2E;background:#FBF3E2;border:1px dashed var(--gold);border-radius:10px;padding:10px 14px;margin-top:4px}
+.dm-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+.dm-close{position:absolute;top:14px;right:16px;background:var(--gold);border:0;color:#fff;width:42px;height:42px;border-radius:50%;cursor:pointer;font-size:19px;z-index:3;box-shadow:0 6px 18px rgba(0,0,0,.3);transition:.25s}
+.dm-close:hover{background:var(--gold-2);transform:rotate(90deg)}
+@media(max-width:760px){.dm-card{grid-template-columns:1fr}.dm-im{min-height:210px}.dm-body{padding:26px 22px}}
+/* ============ ÁUDIO AMBIENTE ============ */
+.snd-btn{position:fixed;left:20px;bottom:80px;z-index:61;width:50px;height:50px;border-radius:50%;border:1px solid var(--gold);background:rgba(14,46,78,.94);color:var(--gold-soft);cursor:pointer;display:grid;place-items:center;transition:.3s;box-shadow:0 10px 26px rgba(0,0,0,.28)}
+.snd-btn:hover{transform:scale(1.09)}
+.snd-btn .snd-ico{width:22px;height:22px}
+.snd-btn .eq{position:absolute;bottom:6px;display:flex;gap:2px;align-items:flex-end;height:8px}
+.snd-btn .eq i{width:2px;background:var(--gold-soft);border-radius:2px;height:3px}
+.snd-btn.playing .eq i{animation:eqb .9s ease-in-out infinite}
+.snd-btn.playing .eq i:nth-child(2){animation-delay:.15s}
+.snd-btn.playing .eq i:nth-child(3){animation-delay:.3s}
+@keyframes eqb{0%,100%{height:2px}50%{height:8px}}
+.snd-btn .ring{position:absolute;inset:-1px;border-radius:50%;border:1px solid rgba(194,160,89,.5);opacity:0}
+.snd-btn.playing .ring{animation:pulseRing 2.6s ease-out infinite}
+@keyframes pulseRing{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.7);opacity:0}}
+.snd-tip{position:fixed;left:80px;bottom:92px;z-index:61;background:var(--navy);color:var(--gold-soft);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:500;padding:9px 15px;border-radius:8px;border:1px solid rgba(194,160,89,.35);box-shadow:0 10px 26px rgba(0,0,0,.25);opacity:0;transform:translateX(-8px);transition:.4s;pointer-events:none;white-space:nowrap}
+.snd-tip.show{opacity:1;transform:none}
+@media(max-width:640px){.snd-btn{left:14px;bottom:84px;width:46px;height:46px}.snd-tip{display:none}}
+/* ============ GALERIA CINEMATOGRÁFICA ============ */
+.gal button img{animation:kenburns 19s ease-in-out infinite alternate;transform-origin:center}
+.gal button:nth-child(2n) img{animation-duration:23s;animation-direction:alternate-reverse;transform-origin:70% 30%}
+.gal button:nth-child(3n) img{animation-duration:26s;transform-origin:30% 70%}
+@keyframes kenburns{from{transform:scale(1)}to{transform:scale(1.16) translate(-1.5%,-1%)}}
+.gal button:hover img{animation-play-state:paused;scale:1.14}
+.gal button::after{content:"◉";position:absolute;right:10px;bottom:8px;color:#fff;font-size:12px;opacity:.75;text-shadow:0 1px 4px rgba(0,0,0,.6);transition:.3s}
+.gal button:hover::after{opacity:1;transform:scale(1.15)}
 </style>
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":["Restaurant","LodgingBusiness"],"name":"Pousada e Restaurante do Adão","servesCuisine":["Frutos do mar","Brasileira"],"priceRange":"$$","telephone":"+55-11-99999-9999","address":{"@type":"PostalAddress","addressLocality":"Rio Grande da Serra","addressRegion":"SP","addressCountry":"BR"},"hasMap":"https://maps.app.goo.gl/9yCmkrTV2Pdp77SQ8","aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","reviewCount":"312"},"openingHours":["Tu-Su 11:30-23:00"]}
+{"@context":"https://schema.org","@type":["Restaurant","LodgingBusiness"],"name":"Pousada e Restaurante do Adão","servesCuisine":["Frutos do mar","Brasileira"],"priceRange":"$$","telephone":"+55-11-99999-9999","address":{"@type":"PostalAddress","streetAddress":"Rua Ana Leite de Figueiredo, 25 - Vila Lavínia","addressLocality":"Rio Grande da Serra","postalCode":"09450-000","addressRegion":"SP","addressCountry":"BR"},"hasMap":"https://www.google.com/maps/search/?api=1&query=Pousada+e+Restaurante+do+Ad%C3%A3o+Rua+Ana+Leite+de+Figueiredo+25+Rio+Grande+da+Serra+SP","aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","reviewCount":"312"},"openingHours":["Tu-Su 11:30-23:00"]}
 </script>
 </head>
 <body>
@@ -322,10 +389,10 @@ footer{background:var(--navy);color:#CBD7E6;padding:56px 0 26px}
       <p>Receitas da casa com ingredientes frescos, finalização no azeite de ervas e aquele toque do chef Adão.</p>
     </div>
     <div class="grid4">
-      <div class="dish reveal"><div class="plate"><img loading="lazy" src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?q=80&w=800&auto=format&fit=crop" alt="Lagosta grelhada"></div><h3>LAGOSTA GRELHADA</h3><p>Manteiga de limão • Alho • Ervas</p></div>
-      <div class="dish reveal"><div class="plate"><img loading="lazy" src="https://images.unsplash.com/photo-1551218808-94e220e084d2?q=80&w=800&auto=format&fit=crop" alt="Vieiras seladas"></div><h3>VIEIRAS SELADAS</h3><p>Purê de couve-flor • Pancetta crocante</p></div>
-      <div class="dish reveal"><div class="plate"><img loading="lazy" src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?q=80&w=800&auto=format&fit=crop" alt="Robalo mediterrâneo"></div><h3>ROBALO MEDITERRÂNEO</h3><p>Relish de azeitonas • Funcho • Citrus</p></div>
-      <div class="dish reveal"><div class="plate"><img loading="lazy" src="https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=800&auto=format&fit=crop" alt="Linguine de frutos do mar"></div><h3>LINGUINE DO MAR</h3><p>Camarões • Tomate cereja • Vinho branco</p></div>
+      <div class="dish reveal" data-dish="lagosta" role="button" tabindex="0" aria-label="Ver detalhes da Lagosta Grelhada"><div class="plate"><img loading="lazy" src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?q=80&w=800&auto=format&fit=crop" alt="Lagosta grelhada"></div><h3>LAGOSTA GRELHADA</h3><p>Manteiga de limão • Alho • Ervas</p><span class="dish-cta">Ver prato ✦</span></div>
+      <div class="dish reveal" data-dish="vieiras" role="button" tabindex="0" aria-label="Ver detalhes das Vieiras Seladas"><div class="plate"><img loading="lazy" src="https://images.unsplash.com/photo-1551218808-94e220e084d2?q=80&w=800&auto=format&fit=crop" alt="Vieiras seladas"></div><h3>VIEIRAS SELADAS</h3><p>Purê de couve-flor • Pancetta crocante</p><span class="dish-cta">Ver prato ✦</span></div>
+      <div class="dish reveal" data-dish="robalo" role="button" tabindex="0" aria-label="Ver detalhes do Robalo Mediterrâneo"><div class="plate"><img loading="lazy" src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?q=80&w=800&auto=format&fit=crop" alt="Robalo mediterrâneo"></div><h3>ROBALO MEDITERRÂNEO</h3><p>Relish de azeitonas • Funcho • Citrus</p><span class="dish-cta">Ver prato ✦</span></div>
+      <div class="dish reveal" data-dish="linguine" role="button" tabindex="0" aria-label="Ver detalhes do Linguine do Mar"><div class="plate"><img loading="lazy" src="https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=800&auto=format&fit=crop" alt="Linguine de frutos do mar"></div><h3>LINGUINE DO MAR</h3><p>Camarões • Tomate cereja • Vinho branco</p><span class="dish-cta">Ver prato ✦</span></div>
     </div>
     <div style="text-align:center;margin-top:36px" class="reveal">
       <a class="btn btn-navy" href="#reservar">Quero provar — reservar mesa</a>
@@ -465,14 +532,15 @@ footer{background:var(--navy);color:#CBD7E6;padding:56px 0 26px}
       <div class="eyebrow" style="justify-content:flex-start">Get in touch</div>
       <h2 class="serif" style="font-size:clamp(30px,3.4vw,44px);color:var(--navy);letter-spacing:.04em;margin:12px 0">COMO CHEGAR</h2>
       <ul class="contact-list">
-        <li>📍 Estrada do Mirante — Rio Grande da Serra • SP <a href="https://maps.app.goo.gl/9yCmkrTV2Pdp77SQ8" target="_blank" rel="noopener">Abrir no Google Maps</a></li>
-        <li>🕐 Restaurante: Ter–Dom • 11h30–23h | Pousada: todos os dias</li>
+        <li>📍 <b>Rua Ana Leite de Figueiredo, 25</b> — Vila Lavínia, Rio Grande da Serra • SP, 09450-000 <a href="https://www.google.com/maps/search/?api=1&query=Pousada+e+Restaurante+do+Ad%C3%A3o+Rua+Ana+Leite+de+Figueiredo+25+Rio+Grande+da+Serra+SP" target="_blank" rel="noopener">Abrir no Google Maps</a></li>
+        <li>🕐 Restaurante: Ter–Dom • 11h30–23h | Pousada: todos os dias • check-in 14h</li>
+        <li>🍽️ Almoço e jantar • Frutos do mar &amp; brasileira • Café da manhã para hóspedes</li>
         <li>📞 <a href="tel:+5511999999999">+55 (11) 99999-9999</a> &nbsp; ✉️ <a href="mailto:contato@pousadadoadao.com.br">contato@pousadadoadao.com.br</a></li>
-        <li>📸 <a href="#" onclick="return false">@pousadadoadao</a> — marque seu pôr do sol #PordoAdao</li>
+        <li>📸 <a href="https://www.instagram.com/pousadadoadao/" target="_blank" rel="noopener">@pousadadoadao</a> — marque seu pôr do sol <b>#PordoAdao</b></li>
       </ul>
-      <div class="map"><iframe title="Mapa Pousada e Restaurante do Adão" loading="lazy" src="https://www.google.com/maps?q=-23.7496073,-46.4002247&z=14&output=embed"></iframe></div>
+      <div class="map"><iframe title="Mapa Pousada e Restaurante do Adão" loading="lazy" src="https://www.google.com/maps?q=Rua%20Ana%20Leite%20de%20Figueiredo%2C%2025%20-%20Vila%20Lav%C3%ADnia%2C%20Rio%20Grande%20da%20Serra%20-%20SP%2C%2009450-000&z=16&output=embed"></iframe></div>
       <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap">
-        <a class="btn btn-gold" href="https://maps.app.goo.gl/9yCmkrTV2Pdp77SQ8" target="_blank" rel="noopener">Traçar rota</a>
+        <a class="btn btn-gold" href="https://www.google.com/maps/dir/?api=1&destination=Rua+Ana+Leite+de+Figueiredo,+25+-+Vila+Lavínia,+Rio+Grande+da+Serra+-+SP,+09450-000" target="_blank" rel="noopener">Traçar rota</a>
         <a class="btn btn-outline" href="https://wa.me/5511999999999?text=Ol%C3%A1!%20Quero%20reservar%20na%20Pousada%20e%20Restaurante%20do%20Ad%C3%A3o." target="_blank" rel="noopener">Chamar no WhatsApp</a>
       </div>
     </div>
@@ -496,6 +564,34 @@ footer{background:var(--navy);color:#CBD7E6;padding:56px 0 26px}
 </a>
 
 <button class="totop" id="totop" aria-label="Voltar ao topo">↑</button>
+
+<button class="snd-btn" id="sndBtn" aria-label="Ativar som ambiente" aria-pressed="false">
+  <span class="ring"></span>
+  <svg class="snd-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path class="wave1" d="M15.5 8.5a5 5 0 0 1 0 7"/><path class="wave2" d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+  <span class="eq"><i></i><i></i><i></i></span>
+</button>
+<div class="snd-tip" id="sndTip">Toque para o som da pousada</div>
+
+<div class="dish-modal" id="dishModal" role="dialog" aria-modal="true" aria-label="Detalhes do prato">
+  <div class="dm-card">
+    <button class="dm-close" id="dmClose" aria-label="Fechar">✕</button>
+    <div class="dm-im"><img id="dmImg" src="" alt=""></div>
+    <div class="dm-body">
+      <div class="dm-eyebrow" id="dmEyebrow"></div>
+      <h3 id="dmTitle"></h3>
+      <div class="dm-sub" id="dmSub"></div>
+      <div class="dm-price"><span id="dmPrice"></span><small id="dmPriceNote"></small></div>
+      <p class="dm-desc" id="dmDesc"></p>
+      <div class="dm-block"><h4>Ingredientes</h4><div class="dm-ing" id="dmIng"></div></div>
+      <div class="dm-block"><h4>No prato</h4><ul class="dm-facts" id="dmFacts"></ul></div>
+      <div class="dm-allerg" id="dmAllerg"></div>
+      <div class="dm-actions">
+        <a class="btn btn-navy" id="dmReserve" href="#reservar">Reservar mesa</a>
+        <a class="btn btn-outline" id="dmWpp" href="#" target="_blank" rel="noopener">Pedir pelo WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="lightbox" id="lightbox" role="dialog" aria-label="Galeria ampliada"><button id="lbClose" aria-label="Fechar">✕</button><button class="lb-nav" id="lbPrev" aria-label="Foto anterior">‹</button><img id="lbImg" src="" alt="Foto ampliada"><button class="lb-nav" id="lbNext" aria-label="Próxima foto">›</button><span id="lbCount"></span></div>
 
@@ -604,6 +700,184 @@ $('#year').textContent=new Date().getFullYear();
       vid.pause();
     }
   }),{threshold:.25}).observe(vid.closest('.sunset'));
+})();
+
+/* ===== CARDÁPIO INTERATIVO (modal por prato) ===== */
+const DISHES={
+  lagosta:{
+    eyebrow:'Frutos do mar • Prato da casa',
+    title:'LAGOSTA GRELHADA',
+    sub:'Inteira na brasa, finalizada na manteiga de limão siciliano',
+    img:'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?q=80&w=1200&auto=format&fit=crop',
+    price:'R$ 189', note:'/ porção individual',
+    desc:'Lagosta fresca do litoral, aberta ao meio e grelhada lentamente na brasa de lenha até a carne ficar macia e suculenta. Selada no fim com manteiga emulsionada de limão siciliano, alho tostado e ervas frescas colhidas na horta da pousada.',
+    ing:['Lagosta fresca','Manteiga sem sal','Limão siciliano','Alho tostado','Salsa e salsinha','Azeite extravirgem','Tomilho','Pimenta-do-reino','Flor de sal'],
+    facts:[['Porção','1 lagosta inteira (~700g)'],['Acompanha','Arroz de casca, legumes grelhados e purê rústico de batata'],['Preparo','Brasa de lenha + finalização na manteiga'],['Tempo','~25 min']],
+    allerg:'Contém crustáceos e lácteos. Pode conter traços de moluscos.'
+  },
+  vieiras:{
+    eyebrow:'Entradas • Seleção do chef',
+    title:'VIEIRAS SELADAS',
+    sub:'Douradas na frigideira, sobre purê de couve-flor e pancetta',
+    img:'https://images.unsplash.com/photo-1551218808-94e220e084d2?q=80&w=1200&auto=format&fit=crop',
+    price:'R$ 96', note:'/ 5 unidades',
+    desc:'Vieiras selecionadas, seladas rapidamente na frigideira quente para manter o centro macio e o exterior dourado. Servidas sobre um creme aveludado de couve-flor, com lascas de pancetta crocante, manteiga beurre noisette e um fio de azeite trufado.',
+    ing:['Vieiras frescas','Couve-flor','Pancetta','Manteiga beurre noisette','Azeite trufado','Noz-moscada','Cebolinha','Flor de sal'],
+    facts:[['Porção','5 vieiras'],['Acompanha','Creme de couve-flor e pancetta crocante'],['Preparo','Selagem rápida na frigideira'],['Tempo','~12 min']],
+    allerg:'Contém moluscos, lácteos e suínos. Pode conter traços de crustáceos.'
+  },
+  robalo:{
+    eyebrow:'Peixes • Da costa para a mesa',
+    title:'ROBALO MEDITERRÂNEO',
+    sub:'Filé grelhado com relish de azeitonas, funcho e citrus',
+    img:'https://images.unsplash.com/photo-1467003909585-2f8a72700288?q=80&w=1200&auto=format&fit=crop',
+    price:'R$ 132', note:'/ filé ~320g',
+    desc:'Posta alta de robalo fresco, grelhada com pele crocante e polpa macia. Acompanha um relish vibrante de azeitonas kalamata, alcaparras e funcho, refrescado com segmentos de laranja e limão-siciliano e amanteigado com azeite e ervas.',
+    ing:['Robalo fresco','Azeitona kalamata','Alcaparras','Funcho','Laranja e limão','Azeite extravirgem','Tomilho','Manteiga'],
+    facts:[['Porção','Filé ~320g'],['Acompanha','Funcho gratinado, arroz de ervas e legumes'],['Preparo','Grelhado com pele crocante'],['Tempo','~20 min']],
+    allerg:'Contém peixe e lácteos. Pode conter traços de crustáceos e moluscos.'
+  },
+  linguine:{
+    eyebrow:'Massas artesanais • Do mar',
+    title:'LINGUINE DO MAR',
+    sub:'Camarões, mexilhões e tomate cereja no vinho branco',
+    img:'https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=1200&auto=format&fit=crop',
+    price:'R$ 118', note:'/ porção',
+    desc:'Massa linguine artesanal cozida al dente, refogada no wok com camarões limpos, mexilhões, tomate cereja confitado e alho. Deglaçada com vinho branco seco, finalizada com azeite extravirgem, sálvia fresca e raspas de limão.',
+    ing:['Linguine artesanal','Camarão limpo','Mexilhões','Tomate cereja','Vinho branco seco','Alho','Sálvia','Azeite extravirgem','Pimenta calabresa'],
+    facts:[['Porção','Porção individual (~320g)'],['Acompanha','Pão artesanal da casa'],['Preparo','Refogado no wok com deglaçage'],['Tempo','~18 min']],
+    allerg:'Contém glúten, crustáceos e moluscos. Pode conter traços de peixe e lácteos.'
+  }
+};
+const dm=$('#dishModal');
+function openDish(key){
+  const x=DISHES[key];if(!x)return;
+  $('#dmImg').src=x.img;$('#dmImg').alt=x.title;
+  $('#dmEyebrow').textContent=x.eyebrow;
+  $('#dmTitle').textContent=x.title;
+  $('#dmSub').textContent=x.sub;
+  $('#dmPrice').textContent=x.price;
+  $('#dmPriceNote').textContent=x.note;
+  $('#dmDesc').textContent=x.desc;
+  $('#dmIng').innerHTML=x.ing.map(i=>`<span>${i}</span>`).join('');
+  $('#dmFacts').innerHTML=x.facts.map(f=>`<li><b>${f[0]}</b><span>${f[1]}</span></li>`).join('');
+  $('#dmAllerg').textContent='⚠ '+x.allerg;
+  $('#dmWpp').href='https://wa.me/5511999999999?text='+encodeURIComponent('Olá! Tenho interesse no prato '+x.title+' ('+x.price+') da Pousada do Adão. Podem me passar informações?');
+  dm.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeDish(){dm.classList.remove('open');document.body.style.overflow=''}
+document.querySelectorAll('[data-dish]').forEach(el=>{
+  el.addEventListener('click',()=>openDish(el.dataset.dish));
+  el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDish(el.dataset.dish)}});
+});
+$('#dmClose').addEventListener('click',closeDish);
+dm.addEventListener('click',e=>{if(e.target===dm)closeDish()});
+$('#dmReserve').addEventListener('click',()=>{closeDish()});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&dm.classList.contains('open'))closeDish()});
+
+/* ===== ÁUDIO AMBIENTE (spa/hotel, sintetizado via Web Audio — sem arquivo externo) ===== */
+(function(){
+  const btn=$('#sndBtn'),tip=$('#sndTip'),ico=btn.querySelector('.snd-ico');
+  let ctx,master,nodes=[],playing=false,started=false;
+  // dica some sozinha após alguns segundos
+  setTimeout(()=>tip.classList.remove('show'),5200);
+  setTimeout(()=>tip.classList.add('show'),2600);
+
+  function noiseBuffer(c,dur){
+    const b=c.createBuffer(1,c.sampleRate*dur,c.sampleRate);
+    const d=b.getChannelData(0);
+    for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+    return b;
+  }
+  function build(){
+    ctx=new (window.AudioContext||window.webkitAudioContext)();
+    master=ctx.createGain();master.gain.value=0;master.connect(ctx.destination);
+
+    // 1) Piso de "mar" — ruído filtrado com LFO suave nas ondas
+    const n=ctx.createBufferSource();n.buffer=noiseBuffer(ctx,4);n.loop=true;
+    const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=520;lp.Q.value=.6;
+    const nGain=ctx.createGain();nGain.gain.value=.16;
+    const lfo=ctx.createOscillator();lfo.frequency.value=.07; // onda lenta
+    const lfoAmt=ctx.createGain();lfoAmt.gain.value=340;
+    lfo.connect(lfoAmt);lfoAmt.connect(lp.frequency);
+    n.connect(lp);lp.connect(nGain);nGain.connect(master);
+    n.start();lfo.start();
+    nodes.push(n,lfo);
+
+    // 2) Pad de acorde quente (spa) — senos suaves com detune
+    const chord=[174.61,220.0,261.63,329.63]; // F3 A3 C4 E4 — Fmaj7 acolhedor
+    chord.forEach((f,i)=>{
+      const o=ctx.createOscillator();o.type='sine';o.frequency.value=f;
+      const g=ctx.createGain();g.gain.value=.05;
+      // vibrato sutil
+      const vib=ctx.createOscillator();vib.frequency.value=.13+i*.02;
+      const vibAmt=ctx.createGain();vibAmt.gain.value=1.1;
+      vib.connect(vibAmt);vibAmt.connect(o.frequency);
+      // fade em/out lento por voz
+      const trem=ctx.createOscillator();trem.frequency.value=.05+i*.015;
+      const tremAmt=ctx.createGain();tremAmt.gain.value=.022;
+      trem.connect(tremAmt);tremAmt.connect(g.gain);
+      o.connect(g);g.connect(master);
+      o.start();vib.start();trem.start();
+      nodes.push(o,vib,trem);
+    });
+
+    // 3) Sinos de água (tipo chime de spa) — pingos aleatórios
+    const chime=()=>{
+      if(!playing)return;
+      const o=ctx.createOscillator();o.type='sine';
+      const scale=[523.25,587.33,659.25,783.99,880.0,1046.5];
+      o.frequency.value=scale[Math.floor(Math.random()*scale.length)];
+      const g=ctx.createGain();g.gain.value=0;
+      const t=ctx.currentTime;
+      g.gain.setValueAtTime(0,t);
+      g.gain.linearRampToValueAtTime(.05,t+.04);
+      g.gain.exponentialRampToValueAtTime(.0001,t+3.4);
+      const pan=ctx.createStereoPanner?ctx.createStereoPanner():null;
+      if(pan){pan.pan.value=(Math.random()*2-1)*.6;o.connect(pan);pan.connect(g);}
+      else{o.connect(g)}
+      g.connect(master);
+      o.start(t);o.stop(t+3.5);
+      setTimeout(chime,2600+Math.random()*4200);
+    };
+    setTimeout(chime,1400);
+  }
+  function fade(to,sec){
+    const t=ctx.currentTime;
+    master.gain.cancelScheduledValues(t);
+    master.gain.setValueAtTime(master.gain.value,t);
+    master.gain.linearRampToValueAtTime(to,t+sec);
+  }
+  function play(){
+    if(!started){build();started=true;}
+    if(ctx.state==='suspended')ctx.resume();
+    playing=true;fade(.5,2.2);
+    btn.classList.add('playing');btn.setAttribute('aria-pressed','true');
+    ico.innerHTML='<path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/>';
+    tip.classList.remove('show');
+  }
+  function stop(){
+    playing=false;if(ctx)fade(0,.8);
+    btn.classList.remove('playing');btn.setAttribute('aria-pressed','false');
+    ico.innerHTML='<path d="M11 5 6 9H3v6h3l5 4V5z"/><line x1="22" y1="9" x2="16" y2="15"/><line x1="16" y1="9" x2="22" y2="15"/>';
+  }
+  btn.addEventListener('click',()=>playing?stop():play());
+  // primeira interação do usuário no site ativa o som suavemente (política de autoplay)
+  let autoTried=false;
+  const firstGesture=e=>{
+    if(autoTried)return;
+    // não roubar o clique do próprio botão de som (ele já controla o estado)
+    if(e.target&&e.target.closest&&e.target.closest('#sndBtn'))return;
+    autoTried=true;
+    play();
+    removeEventListener('pointerdown',firstGesture);
+    removeEventListener('keydown',firstGesture);
+  };
+  addEventListener('pointerdown',firstGesture,{once:false});
+  addEventListener('keydown',firstGesture,{once:false});
+  // pausa quando a aba fica oculta (economia)
+  document.addEventListener('visibilitychange',()=>{if(document.hidden&&playing)stop()});
 })();
 
 /* ===== INTERATIVIDADE AVANÇADA (3Dtilt, cursor, contadores, magnético) ===== */
